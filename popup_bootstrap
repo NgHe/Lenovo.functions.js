@@ -1,0 +1,84 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+   var url = window.location.href;
+   var url_arr = url.split('/');
+   $(function() {
+   	               
+                    $('li.subSeriesLink').each(function() {
+                    	                   	
+                    	var short_name="";
+                        var desc="";
+                        var img_src="";
+                        var logo_brand="";
+                    	var ele_ment = $(this);
+                        ele_ment.popover({
+                        	trigger : 'hover',
+					        html:true,
+					        container: 'body',
+                            title: function() {
+                                return title();
+                            },
+                            placement: 'right',
+                            delay:{show:100},
+                            content: function() {
+                                return content();
+                            }
+                        });
+                        
+                        ele_ment.on("mouseenter", function() {
+                            var _this = this;
+                            $(_this).css({'background': '#009dd9','cursor': 'pointer'});
+                            $(_this).find('a').css('color', '#ffffff');
+                            var sub_url = $(_this).find('a').attr('href');
+                            var sub_url_arr=sub_url.split('/');
+                            var sub_url_arr_length = sub_url_arr.length;
+                            var series = $(_this).parent().parent().find('a').attr('href');
+                            var series_arr = series.split('/');
+						    var series_arr_length = series_arr.length;
+						    var series_json = 'http://www3.lenovo.com/' + url_arr[3] + '/' + url_arr[4] + '/c/products/json?categoryCodes=';
+						    var json_para = series_arr[series_arr_length - 1];
+						    series_json = series_json + json_para;
+						    
+                             if (sub_url_arr[4] == 'thinkpad') {
+								     logo_brand = 'https://static.lenovo.com/mea/ThinkPad.png';
+								  } else if (sub_url_arr[4] == 'yoga') {
+								     logo_brand = 'https://static.lenovo.com/mea/Yoga.png';
+								  } else if (sub_url_arr[4] == 'ideapad') {
+								    logo_brand = 'https://static.lenovo.com/mea/IdeaPad.png';
+								  } else {
+								     logo_brand = 'https://static.lenovo.com/mea/Lenovo.png';
+							  }
+                                    
+						    $.getJSON(series_json, function (data) {
+                                $.each(data[json_para], function (i, item) {
+                                    if (item.code === sub_url_arr[sub_url_arr_length - 1]) {
+									        img_src=item.imageURL;
+									        short_name=item.shortName;
+									        desc=item.description;        
+                                    }
+                                });
+                            });
+                        });
+                                           
+                        ele_ment.on("mouseleave", function() {
+                            var _this = this;
+                            $(_this).css({'background': '#ffffff','cursor': 'pointer'});
+                            $(_this).find('a').css('color', '#009dd9');
+                        });
+                       
+                        function  content()  {      
+                          var  data  =  "<div><img src=\' "+ img_src + "\'/><div >"+short_name+ "</div><span style=\'color:009dd9;\'>" + desc + "</span></div>";            
+                          return  data;
+                        }  
+                        
+                        function  title()  {      
+                          var  data  =  "<img src=\'"+logo_brand+"'\'/>";            
+                          return  data;
+                        }    
+                    });
+                               
+    }); 
+    </script>
