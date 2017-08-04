@@ -1,0 +1,110 @@
+// 增强网页的交互性，提高用户浏览停留时间
+
+var url = window.location.href;
+var url_arr = url.split('/');
+$(function() {
+    $('li.subSeriesLink').each(function() {
+
+        var ele_ment = $(this);
+
+        ele_ment.on("mouseenter", function() {
+            var short_name="";
+            var desc="";
+            var img_src="";
+            var logo_brand="";
+            var _this = this;
+            $(_this).css({'background': 'url(https://static.lenovo.com/mea/arr_right.png) no-repeat right #009dd9','border-radius':'15px','cursor': 'pointer','text-align':'center','left':'5px'});
+            $(_this).find('a').css('color', '#ffffff');
+            var sub_url = $(_this).find('a').attr('href');
+            var sub_url_arr=sub_url.split('/');
+            var sub_url_arr_length = sub_url_arr.length;
+            var series = $(_this).parent().parent().find('a').attr('href');
+            var series_arr = series.split('/');
+            var series_arr_length = series_arr.length;
+            var series_json = 'http://www3.lenovo.com/' + url_arr[3] + '/' + url_arr[4] + '/c/products/json?categoryCodes=';
+            var json_para = series_arr[series_arr_length - 1];
+            series_json = series_json + json_para;
+
+            if (sub_url_arr[4] == 'thinkpad') {
+                logo_brand = 'https://static.lenovo.com/mea/thinkpad.png';
+            }
+            else if (sub_url_arr[4] == 'yoga') {
+                logo_brand = 'https://static.lenovo.com/mea/yoga.png';
+            }
+            else if (sub_url_arr[4] == 'ideapad') {
+                logo_brand = 'https://static.lenovo.com/mea/ideapad.png';
+            }
+            else {
+                logo_brand = 'https://static.lenovo.com/mea/lenovo.png';
+            }
+
+            $.ajax({
+                dataType: "json",
+                url: series_json,
+                async: false
+            }).done(function( data ) {
+                 $.each(data[json_para], function (i, item) {
+                    if (item.code === sub_url_arr[sub_url_arr_length - 1]) {
+                        img_src=item.imageURL;
+                        short_name=item.shortName;
+                        desc=item.description;
+                    }
+                 });
+               });
+
+
+
+           /* $.getJSON(series_json, function (data) {
+                $.each(data[json_para], function (i, item) {
+                    if (item.code === sub_url_arr[sub_url_arr_length - 1]) {
+                        img_src=item.imageURL;
+                        short_name=item.shortName;
+                       desc=item.description;
+                    }
+                });
+            });*/
+
+
+           $(_this).popover({
+            trigger : 'hover focus',
+            html:true,
+            container: 'body',
+            title: function() {
+                return title();
+            },
+            placement: 'right',
+            delay:{show:100},
+            content: function() {
+                return content();
+            }
+        }).popover('show');
+
+        function  content()  {
+           var  data  =  "<div><img src=\' "+ img_src + "\'/><div>"+short_name+ "</div><span>" + desc + "</span></div>";
+            return  data;
+        }
+
+        function  title()  {
+            var  data  =  "<img src=\'"+logo_brand+"'\'/>";
+            return  data;
+        }
+
+      
+         $(".popover-content").css({'background-color': '#ffffff','color': '#555555','text-align': 'left','font-size':'0.8rem','width':'220px','height':'auto','border-color':'#009dd9'});
+         $(".popover-title").css({'height': '35px','text-align': 'center'});
+         $(".popover.right .arrow").css({'display':'none','border-right-color': '#009dd9'});
+            
+        });
+
+        ele_ment.on("mouseleave", function() {
+            var _this = this;
+             $(_this).popover('hide');
+            $(_this).css({'background': '#ffffff','cursor': 'pointer','text-align':'left'});
+            $(_this).find('a').css('color', '#009dd9');
+        });
+
+
+
+    });
+
+});
