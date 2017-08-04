@@ -1,2 +1,3 @@
 # Lenovo.functions.js
-#daily work 
+# Daily work 
+# sidebar_smart_colllapse and popup_bootstrap are aimed to improve the user's experience. 
